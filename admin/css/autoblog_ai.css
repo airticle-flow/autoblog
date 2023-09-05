@@ -1,0 +1,222 @@
+.autoblog-d-none{
+    display: none;
+}
+
+.autoblog-ai-wrap,
+.autoblog-ai-flex-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.autoblog-ai-space-y-12 {
+    gap: 2rem;
+}
+
+.autoblog-ai-border-b {
+    border-bottom: 1px solid rgba(128, 128, 128, 0.1);
+    padding-bottom: 3rem;
+}
+
+.autoblog-ai-text-base {
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.75rem;
+    color: #2D3748;
+}
+
+.autoblog-ai-bg-yellow {
+    background-color: #FCEADE;
+    padding: 1rem;
+    display: flex;
+}
+
+.autoblog-ai-flex {
+    display: flex;
+}
+
+.autoblog-ai-flex-shrink {
+    flex-shrink: 0;
+}
+
+.autoblog-ai-ml-3 {
+    margin-left: 0.75rem;
+}
+
+.autoblog-ai-text-yellow {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #D69E2E;
+}
+
+.autoblog-ai-mt-2 {
+    margin-top: 0.5rem;
+}
+
+.autoblog-ai-text-blue {
+    color: #3182CE;
+    text-decoration: underline;
+}
+
+.autoblog-ai-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1rem;
+}
+
+.autoblog-ai-col-span-4 {
+    grid-column: span 4 / auto;
+}
+
+.autoblog-ai-col-span-full {
+    grid-column: span 6 / auto;
+}
+
+.autoblog-ai-w-full {
+    width: 100%;
+}
+
+.autoblog-ai-rounded,
+.autoblog-ai-btn {
+    border-radius: 0.25rem;
+}
+
+.autoblog-ai-mt-10 {
+    margin-top: 2.5rem;
+}
+
+.autoblog-ai-btn {
+    background-color: #4299E1;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s;
+}
+
+.autoblog-ai-btn:hover {
+    background-color: #3182CE;
+}
+
+.autoblog-ai-space-x-3 > * + * {
+    margin-left: 0.75rem;
+}
+
+.autoblog-ai-items-center {
+    align-items: center;
+}
+
+.autoblog-ai-space-y-4 > * + * {
+    margin-top: 1rem;
+}
+
+.autoblog-ai-space-y-12 > * + * {
+    margin-top: 3rem;
+}
+
+.autoblog-ai-border-gray-900-10 {
+    border-color: rgba(26, 32, 44, 0.1);
+}
+
+.autoblog-ai-pb-12 {
+    padding-bottom: 3rem;
+}
+
+.autoblog-ai-font-semibold {
+    font-weight: 600;
+}
+
+.autoblog-ai-text-gray-900 {
+    color: #1A202C;
+}
+
+.autoblog-ai-min-w-sm {
+    min-width: 16rem;
+}
+
+.autoblog-ai-max-w-md {
+    max-width: 28rem;
+}
+
+.autoblog-ai-mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.autoblog-ai-bg-white,
+.autoblog-ai-text-white {
+    background-color: #ffffff;
+}
+
+.autoblog-ai-shadow-lg {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.autoblog-ai-rounded-lg {
+    border-radius: 0.5rem;
+}
+
+.autoblog-ai-overflow-hidden {
+    overflow: hidden;
+}
+
+.autoblog-ai-bg-blue-500 {
+    background-color: #3B82F6;
+}
+
+.autoblog-ai-text-2xl {
+    font-size: 1.5rem;
+}
+
+.autoblog-ai-font-bold {
+    font-weight: 700;
+}
+
+.autoblog-ai-text-blue-600 {
+    color: #2563EB;
+}
+
+.autoblog-ai-underline {
+    text-decoration: underline;
+}
+
+.autoblog-ai-mt-4 {
+    margin-top: 1rem;
+}
+
+.autoblog-ai-bg-red-500 {
+    background-color: #EF4444;
+}
+
+.autoblog-ai-hover-bg-red-600:hover {
+    background-color: #DC2626;
+}
+
+.autoblog-ai-bg-gray-100 {
+    background-color: #F3F4F6;
+}
+
+.autoblog-ai-p-6 {
+    padding: 1.5rem;
+}
+
+.autoblog-ai-flex-row-reverse {
+    flex-direction: row-reverse;
+}
+
+.autoblog-ai-hover-bg-blue-600:hover {
+    background-color: #2563EB;
+}
+
+.autoblog-ai-py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.autoblog-ai-px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.autoblog-ai button{
+    cursor: pointer;
+}

@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
     $('#check_token').on('click', function () {
         var token = $('#autoblog_token').val()
        $.ajax({
-           url: 'http://localhost/api/user',
+           url: 'https://airticle-flow.com/api/user',
            headers: {
                "Authorization": "Bearer " + token
            },
@@ -52,3 +52,4 @@ jQuery(document).ready(function($) {
 
     })
 })
+

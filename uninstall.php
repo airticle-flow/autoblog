@@ -29,3 +29,4 @@
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
     exit;
 }
+delete_user_meta(get_current_user_id(), 'autoblog-ai_token');

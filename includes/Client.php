@@ -24,7 +24,7 @@ class Client {
 
     private function request($method, $endpoint, $params = [], $data = []) {
         $url = $this->baseUrl . $endpoint;
-        var_dump($url);
+
         // If there are parameters, append them to the URL
         if (!empty($params) && is_array($params)) {
             $url .= '?' . http_build_query($params);
@@ -56,5 +56,6 @@ class Client {
         curl_close($ch);
         return $response;
     }
+
 }
 

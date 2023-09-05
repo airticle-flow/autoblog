@@ -8,32 +8,35 @@ class AutoblogAiAdmin{
         add_action( 'admin_menu', [$this,'autoblogai_admin_page'] );
         add_action('wp_ajax_save_token', [$this,'save_token']);
         add_action('wp_ajax_revoke_token', [$this,'revoke_token']);
-        add_action('wp_ajax_generate_articles', [$this,'generate_articles']);
+        add_action('wp_ajax_get_projects', [$this,'get_projects']);
+        add_action('wp_ajax_publish_articles', [$this,'publish_articles']);
     }
 
 
     public function autoblogai_admin_page(){
         add_menu_page(
-            'Autoblog-ai',
-            'Autoblog-ai',
+            'AIrticle-flow',
+            'AIrticle-flow',
             'manage_options',
-            'autoblog-ai',
+            'airticle-flow',
             [$this,'display_main_admin_page'],
-            '',
+            plugin_dir_url(__FILE__) . 'img/menu_icon.svg',
             20
         );
 
         add_submenu_page(
-            'autoblog-ai',
+            'airticle-flow',
             'Token setting',
             'Token setting',
             'manage_options',
-            'autoblog-ai-token-settings',
+            'airticle-flow-token-settings',
             [$this, 'display_token_page']
         );
     }
 
     public function display_main_admin_page(){
+        $script_url = plugins_url('js/articles.js', __FILE__);
+        wp_enqueue_script("autoblog_articles", $script_url, array('jquery'));
         require plugin_dir_path(__FILE__) . 'partials/main_menu.php';
 
     }
@@ -44,14 +47,15 @@ class AutoblogAiAdmin{
 
     public function admin_scripts(){
         wp_enqueue_script('jquery');
-
-        wp_enqueue_script("tailwind", "https://cdn.tailwindcss.com");
+        $css_url = plugins_url('css/autoblog_ai.css', __FILE__);
+        wp_enqueue_style("autoblog-css", $css_url);
         $script_url = plugins_url('js/autoblog-ai.js', __FILE__);
         wp_enqueue_script("autoblog_main", $script_url, array('jquery'));
         wp_localize_script('autoblog_main', 'wp_vars', array(
             'ajax_url' => admin_url('admin-ajax.php')
         ));
     }
+
 
     public function save_token(){
         $token = sanitize_text_field($_POST['token']);
@@ -65,17 +69,78 @@ class AutoblogAiAdmin{
         wp_die();
     }
 
-    public function generate_articles(){
+
+    public function get_projects(){
         if ( ! class_exists('SimpleCurl') ) {
             require AUTOBLOG_AI_PLUGIN_PATH . 'includes/Client.php';
         }
-        $prompt = sanitize_text_field($_POST['prompt']);
-        $client = new Client("http://dev.dragnsurvey.com/", get_user_meta(get_current_user_id(), 'autoblog-ai_token', true));
-        $postData = ['prompt' => $prompt, 'quantity' => 1];
-        $response = $client->post('api/articles', $postData);
-        var_dump($response);
+        $client = new Client("https://airticle-flow.com/", get_user_meta(get_current_user_id(), 'autoblog-ai_token', true));
+        $response = $client->get('api/projects');
         echo json_encode($response);
         wp_die();
+    }
+
+    public function publish_articles(){
+        if ( ! class_exists('SimpleCurl') ) {
+            require AUTOBLOG_AI_PLUGIN_PATH . 'includes/Client.php';
+        }
+        $projectId = (int) $_POST['project_id'];
+        $category_id = (int) $_POST['category_id'];
+        $schedule = sanitize_text_field($_POST['schedule']);
+        $planning = $_POST['planning'];
+
+        $post_status = "publish";
+        if($schedule === "draft"){
+            $post_status = "draft";
+        }
+
+        if($schedule === "drip"){
+            if(!empty($planning)){
+                $post_status = "future";
+                $period_time = (int) $_POST['planning']['period_time'];
+                $period_type = sanitize_text_field($_POST['planning']['period_type']);
+                $frequency_type = sanitize_text_field($_POST['planning']['frequency_type']);
+                if($frequency_type === "static"){
+                    $frequency_hours = (int) $_POST['planning']['frequency_hours'];
+                    $frequency_minutes = (int) $_POST['planning']['frequency_minutes'];
+                }
+            }
+            else{
+                wp_die('Malformed Request', 'Malformed Request', array( 'response' => 400 ));
+            }
+        }
+
+        $client = new Client("https://airticle-flow.com/", get_user_meta(get_current_user_id(), 'autoblog-ai_token', true));
+        $articles = json_decode($client->get("api/projects/$projectId/articles"));
+
+
+        $initialDay = new DateTime();
+        foreach ($articles as $index => $article){
+            $post_data = array(
+                'post_title'    => $article->title,
+                'post_content'  => $article->content,
+                'post_status'   => $post_status,
+                'post_author'   => get_current_user_id(),
+            );
+            if(!empty($category_id)){
+                $post_data['post_category'] = array( $category_id );
+            }
+            if($post_status === "future"){
+                $post_date = $initialDay->modify("+$period_time $period_type");
+                if($frequency_type === "static"){
+                    $post_date->setTime($frequency_hours, $frequency_minutes);
+                }
+                else{
+                    $randomHours = rand(0, 23);
+                    $randomMinutes = rand(0, 59);
+                    $post_date->setTime($randomHours, $randomMinutes);
+                }
+                $post_data['post_date'] = $post_date->format("Y-m-d H:i:s");
+            }
+
+            $post_id = wp_insert_post( $post_data );
+        }
+
     }
 }
 
