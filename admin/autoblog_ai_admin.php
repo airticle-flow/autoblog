@@ -3,6 +3,12 @@
 class AutoblogAiAdmin{
 
 
+    public function __construct(){
+        require_once(ABSPATH . 'wp-admin/includes/media.php');
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        require_once(ABSPATH . 'wp-admin/includes/image.php');
+    }
+
     public function run(){
         add_action('admin_enqueue_scripts', [$this,"admin_scripts"]);
         add_action( 'admin_menu', [$this,'autoblogai_admin_page'] );
@@ -139,8 +145,39 @@ class AutoblogAiAdmin{
             }
 
             $post_id = wp_insert_post( $post_data );
+            $this->setFeaturedImage($article->content, $post_id);
+
         }
 
+    }
+
+    private function setFeaturedImage($html, $post_id){
+        if ( ! class_exists('DomParser') ) {
+            require AUTOBLOG_AI_PLUGIN_PATH . 'includes/DomParser.php';
+        }
+        $domParser = new DomParser();
+        $image_url = $domParser->get_first_img_src($html);
+        if(!empty($image_url)){
+            $media = media_sideload_image($image_url, $post_id);
+            // Check if there was an error sideloading the image.
+            if (is_wp_error($media)) {
+                return;
+            }
+            $attachments = get_posts(array(
+                'post_type' => 'attachment',
+                'numberposts' => 1,
+                'post_status' => 'any',
+                'post_parent' => $post_id,
+                'orderby' => 'post_date',
+                'order' => 'DESC'
+            ));
+            if ($attachments) {
+                $attachment_id = $attachments[0]->ID;
+
+                // Set the post thumbnail.
+                set_post_thumbnail($post_id, $attachment_id);
+            }
+        }
     }
 }
 
