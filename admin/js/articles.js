@@ -119,32 +119,26 @@ jQuery(document).ready(function($) {
 
     function addFeaturedImages(){
 
-        var batchIds = published_post_ids.splice(0,10);
-
-        while(batchIds.length > 0){
-            var postId = batchIds.shift();
+        if(published_post_ids.length > 0){
+            var postId = published_post_ids.shift();
             $.ajax({
                 type: "post",
                 url: wp_vars.ajax_url,
                 data: {
                     action: "set_featured_image",
-                    post_id : postId,
+                    post_id: postId,
                 },
                 dataType: "json",
                 success: function (result) {
                     featured_post_ids.push(postId);
-                    setTimeout(function(){
-                        if(published_post_ids.length === 0){
+                    setTimeout(function () {
+                        if (published_post_ids.length === 0) {
                             $('#publish-articles').removeClass('autoblog-d-none');
                             $('#publishing-articles').addClass('autoblog-d-none');
-                        }
-                        else{
+                        } else {
                             addFeaturedImages();
                         }
-                    },1000)
-                },
-                error: function(result){
-                    published_post_ids.push(postIds);
+                    }, 300)
                 }
             })
         }
