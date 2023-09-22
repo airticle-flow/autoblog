@@ -48,7 +48,7 @@ jQuery(document).ready(function($) {
             data: {
                 action: "publish_articles",
                 project_id : $('#airticle_projects').val(),
-                category_id : $('#cat').val(),
+                category_id : $('select[name="category"]').val(),
                 schedule: $('input[name="schedule"]:checked').val(),
                 planning: planning
             },
@@ -118,10 +118,11 @@ jQuery(document).ready(function($) {
     }
 
     function addFeaturedImages(){
-        var initLength = published_post_ids.length;
-        while(published_post_ids.length > 0){
-            var postId = published_post_ids.shift();
 
+        var batchIds = published_post_ids.splice(0,10);
+
+        while(batchIds.length > 0){
+            var postId = batchIds.shift();
             $.ajax({
                 type: "post",
                 url: wp_vars.ajax_url,
@@ -133,16 +134,19 @@ jQuery(document).ready(function($) {
                 success: function (result) {
                     featured_post_ids.push(postId);
                     setTimeout(function(){
-                        if(featured_post_ids.length === initLength){
+                        if(published_post_ids.length === 0){
                             $('#publish-articles').removeClass('autoblog-d-none');
                             $('#publishing-articles').addClass('autoblog-d-none');
                         }
-                    },300)
-
-
+                        else{
+                            addFeaturedImages();
+                        }
+                    },1000)
+                },
+                error: function(result){
+                    published_post_ids.push(postIds);
                 }
             })
         }
-
     }
 });
