@@ -16,6 +16,7 @@ class AutoblogAiAdmin{
         add_action('wp_ajax_revoke_token', [$this,'revoke_token']);
         add_action('wp_ajax_get_projects', [$this,'get_projects']);
         add_action('wp_ajax_publish_articles', [$this,'publish_articles']);
+        add_action('wp_ajax_set_featured_image', [$this,'addImage']);
     }
 
 
@@ -119,7 +120,7 @@ class AutoblogAiAdmin{
         $client = new Client("https://airticle-flow.com/", get_user_meta(get_current_user_id(), 'autoblog-ai_token', true));
         $articles = json_decode($client->get("api/projects/$projectId/articles"));
 
-
+        $postIds = [];
         $initialDay = new DateTime();
         foreach ($articles as $index => $article){
             $post_data = array(
@@ -144,11 +145,19 @@ class AutoblogAiAdmin{
                 $post_data['post_date'] = $post_date->format("Y-m-d H:i:s");
             }
 
-            $post_id = wp_insert_post( $post_data );
-            $this->setFeaturedImage($article->content, $post_id);
+            $postIds[] = wp_insert_post( $post_data );
+
 
         }
+        echo json_encode($postIds);
+        wp_die();
+    }
 
+    public function addImage(){
+        $post_id = (int) $_POST['post_id'];
+        $post = get_post($post_id);
+        $content = $post->post_content;
+        $this->setFeaturedImage($content, $post_id);
     }
 
     private function setFeaturedImage($html, $post_id){

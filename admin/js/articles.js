@@ -1,6 +1,7 @@
 jQuery(document).ready(function($) {
     var airticle_projects = [];
-
+    var published_post_ids = [];
+    var featured_post_ids = [];
     function getProjects() {
         $.ajax({
             type: "get",
@@ -53,8 +54,8 @@ jQuery(document).ready(function($) {
             },
             dataType: "json",
             success: function (result) {
-                $('#publish-articles').removeClass('autoblog-d-none');
-                $('#publishing-articles').addClass('autoblog-d-none');
+                published_post_ids = result;
+                addFeaturedImages();
             }
         })
     })
@@ -114,5 +115,34 @@ jQuery(document).ready(function($) {
         $('#frequency-wrapper').html('<div class="autoblog-ai-flex autoblog-ai-space-x-3 autoblog-ai-items-center autoblog-ai-mt-2">' +
             selectHours + '<span>h</span>'+selectMinutes+'<span>min</span>'+
             '</div>')
+    }
+
+    function addFeaturedImages(){
+        var initLength = published_post_ids.length;
+        while(published_post_ids.length > 0){
+            var postId = published_post_ids.shift();
+
+            $.ajax({
+                type: "post",
+                url: wp_vars.ajax_url,
+                data: {
+                    action: "set_featured_image",
+                    post_id : postId,
+                },
+                dataType: "json",
+                success: function (result) {
+                    featured_post_ids.push(postId);
+                    setTimeout(function(){
+                        if(featured_post_ids.length === initLength){
+                            $('#publish-articles').removeClass('autoblog-d-none');
+                            $('#publishing-articles').addClass('autoblog-d-none');
+                        }
+                    },300)
+
+
+                }
+            })
+        }
+
     }
 });
