@@ -16,7 +16,6 @@
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Roman STEC
- * Author URI:        https://airticle-flow.com
  * Text Domain:       AIrticle-flow
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
