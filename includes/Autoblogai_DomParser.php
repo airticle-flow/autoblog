@@ -1,6 +1,6 @@
 <?php
 
-class DomParser
+class Autoblogai_DomParser
 {
     function get_first_img_src($html) {
         // Create a new DOMDocument object.

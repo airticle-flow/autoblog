@@ -6,10 +6,10 @@ jQuery(document).ready(function($) {
         $.ajax({
             type: "get",
             url: wp_vars.ajax_url,
-            data: {action: "get_projects"},
+            data: {action: "get_projects", nonce: wp_vars.nonce},
             dataType: "json",
             success: function (result) {
-                airticle_projects = JSON.parse(result);
+                airticle_projects = result;
                 loadProjects()
             }
         })
@@ -50,7 +50,8 @@ jQuery(document).ready(function($) {
                 project_id : $('#airticle_projects').val(),
                 category_id : $('select[name="category"]').val(),
                 schedule: $('input[name="schedule"]:checked').val(),
-                planning: planning
+                planning: planning,
+                nonce:  wp_vars.nonce
             },
             dataType: "json",
             success: function (result) {
@@ -127,6 +128,7 @@ jQuery(document).ready(function($) {
                 data: {
                     action: "set_featured_image",
                     post_id: postId,
+                    nonce:  wp_vars.nonce
                 },
                 dataType: "json",
                 success: function (result) {

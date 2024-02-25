@@ -53,48 +53,83 @@ class AutoblogAiAdmin{
     }
 
     public function admin_scripts(){
+
+        $nonce = wp_create_nonce('autoblog-ai-nonce');
+
         wp_enqueue_script('jquery');
         $css_url = plugins_url('css/autoblog_ai.css', __FILE__);
         wp_enqueue_style("autoblog-css", $css_url);
         $script_url = plugins_url('js/autoblog-ai.js', __FILE__);
         wp_enqueue_script("autoblog_main", $script_url, array('jquery'));
         wp_localize_script('autoblog_main', 'wp_vars', array(
-            'ajax_url' => admin_url('admin-ajax.php')
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonce' => $nonce
         ));
     }
 
 
     public function save_token(){
+        if (!current_user_can('manage_options')) {
+            wp_die('You do not have sufficient permissions to access this page.');
+        }
+        if (!wp_verify_nonce($_POST['nonce'], 'autoblog-ai-nonce')) {
+            wp_die('Nonce verification failed!');
+        }
         $token = sanitize_text_field($_POST['token']);
         add_user_meta(get_current_user_id(), 'autoblog-ai_token', $token, true);
         wp_die();
     }
 
     public function revoke_token(){
-
+        if (!current_user_can('manage_options')) {
+            wp_die('You do not have sufficient permissions to access this page.');
+        }
+        if (!wp_verify_nonce($_POST['nonce'], 'autoblog-ai-nonce')) {
+            wp_die('Nonce verification failed!');
+        }
         delete_user_meta(get_current_user_id(), 'autoblog-ai_token');
         wp_die();
     }
 
 
     public function get_projects(){
-        if ( ! class_exists('SimpleCurl') ) {
-            require AUTOBLOG_AI_PLUGIN_PATH . 'includes/Client.php';
+        if (!current_user_can('manage_options')) {
+            wp_die('You do not have sufficient permissions to access this page.');
         }
-        $client = new Client("https://airticle-flow.com/", get_user_meta(get_current_user_id(), 'autoblog-ai_token', true));
-        $response = $client->get('api/projects');
-        echo json_encode($response);
+        if (!wp_verify_nonce($_GET['nonce'], 'autoblog-ai-nonce')) {
+            wp_die('Nonce verification failed!');
+        }
+        $url = 'https://airticle-flow.com/api/projects';
+        $token = get_user_meta(get_current_user_id(), 'autoblog-ai_token', true);
+        $headers = array(
+            'Authorization' => 'Bearer ' . $token
+        );
+
+
+        $response = wp_remote_get($url, array(
+            'headers' => $headers,
+            'method'  => 'GET'
+        ));
+        if (!is_wp_error($response)) {
+            $body = wp_remote_retrieve_body($response);
+            $body = json_decode($body);
+            echo wp_json_encode($body);
+
+        }
         wp_die();
     }
 
     public function publish_articles(){
-        if ( ! class_exists('SimpleCurl') ) {
-            require AUTOBLOG_AI_PLUGIN_PATH . 'includes/Client.php';
+        if (!current_user_can('manage_options')) {
+            wp_die('You do not have sufficient permissions to access this page.');
+        }
+        if (!wp_verify_nonce($_POST['nonce'], 'autoblog-ai-nonce')) {
+            wp_die('Nonce verification failed!');
         }
         $projectId = (int) $_POST['project_id'];
         $category_id = (int) $_POST['category_id'];
         $schedule = sanitize_text_field($_POST['schedule']);
-        $planning = $_POST['planning'];
+        $planning = $_POST['planning']; //this is a nested array, all fields will be sanitized when accessed
 
         $post_status = "publish";
         if($schedule === "draft"){
@@ -117,18 +152,32 @@ class AutoblogAiAdmin{
             }
         }
 
-        $client = new Client("https://airticle-flow.com/", get_user_meta(get_current_user_id(), 'autoblog-ai_token', true));
-        $articles = json_decode($client->get("api/projects/$projectId/articles"));
+        $url = 'https://airticle-flow.com/api/projects/'.$projectId.'/articles';
+
+        $token = get_user_meta(get_current_user_id(), 'autoblog-ai_token', true);
+        $headers = array(
+            'Authorization' => 'Bearer ' . $token
+        );
+
+
+        $response = wp_remote_get($url, array(
+            'headers' => $headers,
+            'method'  => 'GET'
+        ));
+        $body = wp_remote_retrieve_body($response);
+        $articles = json_decode($body);
 
         $postIds = [];
         $initialDay = new DateTime();
         foreach ($articles as $index => $article){
+
             $post_data = array(
-                'post_title'    => $article->title,
-                'post_content'  => $article->content,
+                'post_title'    => sanitize_text_field($article->title),
+                'post_content'  => wp_kses_post($article->content),
                 'post_status'   => $post_status,
                 'post_author'   => get_current_user_id(),
             );
+
             if(!empty($category_id)){
                 $post_data['post_category'] = array( $category_id );
             }
@@ -147,13 +196,18 @@ class AutoblogAiAdmin{
 
             $postIds[] = wp_insert_post( $post_data );
 
-
         }
-        echo json_encode($postIds);
+        echo wp_json_encode($postIds);
         wp_die();
     }
 
     public function addImage(){
+        if (!current_user_can('manage_options')) {
+            wp_die('You do not have sufficient permissions to access this page.');
+        }
+        if (!wp_verify_nonce($_POST['nonce'], 'autoblog-ai-nonce')) {
+            wp_die('Nonce verification failed!');
+        }
         $post_id = (int) $_POST['post_id'];
         $post = get_post($post_id);
         $content = $post->post_content;
@@ -161,10 +215,10 @@ class AutoblogAiAdmin{
     }
 
     private function setFeaturedImage($html, $post_id){
-        if ( ! class_exists('DomParser') ) {
-            require AUTOBLOG_AI_PLUGIN_PATH . 'includes/DomParser.php';
+        if ( ! class_exists('Autoblogai_DomParser') ) {
+            require AUTOBLOGAI_PLUGIN_PATH . 'includes/Autoblogai_DomParser.php';
         }
-        $domParser = new DomParser();
+        $domParser = new Autoblogai_DomParser();
         $image_url = $domParser->get_first_img_src($html);
         if(!empty($image_url)){
             $media = media_sideload_image($image_url, $post_id);

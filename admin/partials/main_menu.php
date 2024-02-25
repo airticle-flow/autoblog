@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 $token = get_user_meta(get_current_user_id(), 'autoblog-ai_token', true);
 ?>
 <div class="wrap autoblog-ai-wrap autoblog-ai">

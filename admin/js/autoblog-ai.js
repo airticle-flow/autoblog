@@ -14,7 +14,7 @@ jQuery(document).ready(function($) {
                    $.ajax({
                        type: "post",
                        url : wp_vars.ajax_url,
-                       data: { token : token , action: 'save_token'},
+                       data: { token : token , action: 'save_token', nonce:  wp_vars.nonce},
                        success: function(){
                            window.location.reload();
                        }
@@ -29,7 +29,7 @@ jQuery(document).ready(function($) {
         $.ajax({
             type: "post",
             url : wp_vars.ajax_url,
-            data: {  action: 'revoke_token',},
+            data: {  action: 'revoke_token', nonce:  wp_vars.nonce},
             success: function(){
                 window.location.reload();
             }

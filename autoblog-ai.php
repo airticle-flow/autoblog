@@ -19,7 +19,6 @@
  * Text Domain:       AIrticle-flow
  * License:           GPL v2 or later
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Update URI:        https://airticle-flow.com
  */
 
 // If this file is called directly, abort.
@@ -28,8 +27,8 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 
-if (!defined('AUTOBLOG_AI_PLUGIN_PATH')) {
-    define('AUTOBLOG_AI_PLUGIN_PATH', plugin_dir_path(__FILE__));
+if (!defined('AUTOBLOGAI_PLUGIN_PATH')) {
+    define('AUTOBLOGAI_PLUGIN_PATH', plugin_dir_path(__FILE__));
 }
 
 /**
@@ -57,9 +56,9 @@ function autoblogai_deactivate(){
 require plugin_dir_path( __FILE__ ) . 'includes/autoblog_ai.php';
 
 
-function run_autoblog_ai(){
+function autoblogai_run_autoblog_ai(){
     $autoblogAi = new AutoblogAi();
     $autoblogAi->run();
 }
 
-run_autoblog_ai();
+autoblogai_run_autoblog_ai();
