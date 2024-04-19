@@ -18,7 +18,7 @@ $token = get_user_meta(get_current_user_id(), 'autoblog-ai_token', true);
                     <div class="autoblog-ai-ml-3">
                         <h3 class="autoblog-ai-text-yellow">No token registered</h3>
                         <div class="autoblog-ai-mt-2">
-                            <p>You will need to set up an <a href="<?php menu_page_url('autoblog-ai-token-settings', true); ?>" class="autoblog-ai-text-blue">API token</a> before you can start generating articles.</p>
+                            <p>You will need to set up an <a href="<?php menu_page_url('airticle-flow-token-settings', true); ?>" class="autoblog-ai-text-blue">API token</a> before you can start generating articles.</p>
                         </div>
                     </div>
                 </div>

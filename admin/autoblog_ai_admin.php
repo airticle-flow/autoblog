@@ -72,7 +72,7 @@ class AutoblogAiAdmin{
         if (!current_user_can('manage_options')) {
             wp_die('You do not have sufficient permissions to access this page.');
         }
-        if (!wp_verify_nonce($_POST['nonce'], 'autoblog-ai-nonce')) {
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ) , 'autoblog-ai-nonce' ) ){
             wp_die('Nonce verification failed!');
         }
         $token = sanitize_text_field($_POST['token']);
@@ -84,7 +84,7 @@ class AutoblogAiAdmin{
         if (!current_user_can('manage_options')) {
             wp_die('You do not have sufficient permissions to access this page.');
         }
-        if (!wp_verify_nonce($_POST['nonce'], 'autoblog-ai-nonce')) {
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ) , 'autoblog-ai-nonce' ) ){
             wp_die('Nonce verification failed!');
         }
         delete_user_meta(get_current_user_id(), 'autoblog-ai_token');
@@ -96,7 +96,8 @@ class AutoblogAiAdmin{
         if (!current_user_can('manage_options')) {
             wp_die('You do not have sufficient permissions to access this page.');
         }
-        if (!wp_verify_nonce($_GET['nonce'], 'autoblog-ai-nonce')) {
+
+        if ( ! isset( $_GET['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_GET['nonce'] ) ) , 'autoblog-ai-nonce' ) ){
             wp_die('Nonce verification failed!');
         }
         $url = 'https://airticle-flow.com/api/projects';
@@ -123,7 +124,7 @@ class AutoblogAiAdmin{
         if (!current_user_can('manage_options')) {
             wp_die('You do not have sufficient permissions to access this page.');
         }
-        if (!wp_verify_nonce($_POST['nonce'], 'autoblog-ai-nonce')) {
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ) , 'autoblog-ai-nonce' ) ){
             wp_die('Nonce verification failed!');
         }
         $projectId = (int) $_POST['project_id'];
@@ -205,7 +206,7 @@ class AutoblogAiAdmin{
         if (!current_user_can('manage_options')) {
             wp_die('You do not have sufficient permissions to access this page.');
         }
-        if (!wp_verify_nonce($_POST['nonce'], 'autoblog-ai-nonce')) {
+        if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash ( $_POST['nonce'] ) ) , 'autoblog-ai-nonce' ) ){
             wp_die('Nonce verification failed!');
         }
         $post_id = (int) $_POST['post_id'];
