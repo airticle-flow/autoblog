@@ -2,7 +2,7 @@
 Contributors: @airticleflow
 Tags: artificial intelligence, chat-gpt, stable diffusion, autoblog
 Requires at least: 4.7
-Tested up to: 6.3.1
+Tested up to: 6.5
 Stable tag: 1.0.0
 Requires PHP: 7.0
 License: GPLv2 or later
