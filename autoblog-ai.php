@@ -36,7 +36,7 @@ if (!defined('AUTOBLOGAI_PLUGIN_PATH')) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-const PLUGIN_NAME_VERSION = '1.0.0';
+const AUTOBLOGAI_PLUGIN_NAME_VERSION = '1.0.0';
 
 register_activation_hook(
     __FILE__,

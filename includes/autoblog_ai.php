@@ -7,8 +7,8 @@ class AutoblogAi{
     protected $plugin_name;
     protected $version;
     public function __construct() {
-        if ( defined( 'PLUGIN_NAME_VERSION' ) ) {
-            $this->version = PLUGIN_NAME_VERSION;
+        if ( defined( 'AUTOBLOGAI_PLUGIN_NAME_VERSION' ) ) {
+            $this->version = AUTOBLOGAI_PLUGIN_NAME_VERSION;
         } else {
             $this->version = '1.0.0';
         }
